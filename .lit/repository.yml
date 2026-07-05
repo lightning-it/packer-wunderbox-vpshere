@@ -1,0 +1,24 @@
+schema_version: 1
+managed_by: lightning-it/shared-assets
+repository: packer-wunderbox-vpshere
+visibility: public
+repository_type: packer_template
+release_type: none
+artifact_type: packer_template
+test_profiles:
+- packer-fmt
+- packer-validate
+os_matrix:
+- ubuntu-latest
+product_matrix:
+- wunderbox
+- vsphere
+publishing_targets: []
+galaxy_publish: false
+quay_publish: false
+release_evidence: false
+heavy_incus_required: false
+readme_badges:
+- license
+workflows:
+  ci: repository-quality.yml
