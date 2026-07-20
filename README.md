@@ -21,11 +21,11 @@ Publishing targets: `none`.
 
 ## Supported and Tested Platforms
 
-| Platform / Product | Status | Validation |
-|---|---:|---|
-| ubuntu-latest | Supported | Packer validate |
-| wunderbox | Tested where applicable | Packer validate |
-| vsphere | Tested where applicable | Packer validate |
+| Platform / Product |                  Status | Validation      |
+| ------------------ | ----------------------: | --------------- |
+| ubuntu-latest      |               Supported | Packer validate |
+| wunderbox          | Tested where applicable | Packer validate |
+| vsphere            | Tested where applicable | Packer validate |
 
 <!-- END LIT_SHARED_RELEASE_MODEL -->
 
