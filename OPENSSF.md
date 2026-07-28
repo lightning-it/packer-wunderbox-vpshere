@@ -2,6 +2,15 @@
 
 This repository follows the Lightning IT shared OpenSSF readiness model generated from `lightning-it/shared-assets-lit`.
 
+## Governing Decisions And Standards
+
+- [Repository Topology and Shared Engineering Assets](https://lit.atlassian.net/wiki/spaces/LIT/pages/2878636297)
+- [Branching, Review and Release Governance](https://lit.atlassian.net/wiki/spaces/LIT/pages/2878603438)
+- [Mandatory CI Quality and Artifact Assurance](https://lit.atlassian.net/wiki/spaces/LIT/pages/2878636340)
+- [Distributed Test Ownership and Central Heavy Execution](https://lit.atlassian.net/wiki/spaces/LIT/pages/2886566105)
+- [Repository and Secure SDLC Standard](https://lit.atlassian.net/wiki/spaces/LIT/pages/2887778335)
+- [OpenSSF and Software Supply Chain Assurance](https://lit.atlassian.net/wiki/spaces/LIT/pages/2887024876)
+
 ## Repository
 
 - Repository: `packer-wunderbox-vpshere`
@@ -47,3 +56,5 @@ Packer formatting/validation with credential-free example variables.
 ## Exceptions
 
 Repository-specific exceptions must be documented in this file or in `.lit/repository.yml`. Exceptions must not expose secrets, private infrastructure details, customer data, or credential-bearing examples.
+
+The current `develop` branch is a governed baseline and contains no Packer source template or published image artifact. Packer format, validation, Heavy execution, SBOM, provenance, and signing therefore cannot produce meaningful evidence yet. Exception owner: `@lightning-it/ent:release`; compensating controls: protected baseline branch, repository-quality checks, pinned Actions, secret scanning, and mandatory CODEOWNERS review; review/expiry: `2026-10-31`. Add the standard Packer quality and delegated Heavy profiles before the first template enters `develop`.
