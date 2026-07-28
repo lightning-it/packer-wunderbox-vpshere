@@ -60,5 +60,3 @@ Packer formatting/validation with credential-free example variables.
 ## Exceptions
 
 Repository-specific exceptions must be documented in this file or in `.lit/repository.yml`. Exceptions must not expose secrets, private infrastructure details, customer data, or credential-bearing examples.
-
-The current `develop` branch is a governed baseline and contains no Packer source template or published image artifact. Packer format, validation, Heavy execution, SBOM, provenance, and signing therefore cannot produce meaningful evidence yet. Exception owner: `@lightning-it/ent:release`; compensating controls: protected baseline branch, repository-quality checks, pinned Actions, secret scanning, and mandatory CODEOWNERS review; review/expiry: `2026-10-31`. Add the standard Packer quality and delegated Heavy profiles before the first template enters `develop`.
