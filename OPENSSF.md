@@ -54,7 +54,7 @@ Do not add a passing OpenSSF Best Practices badge until the repository is actual
 - Every non-trusted-automation pull request must have a completed GitHub Copilot
   review for its current head revision. Trusted automation classes are exempt
   only when their dedicated gate verifies the exact actor, branch, title,
-  current revision, and class-specific bounded change contract.
+  current head revision, and class-specific bounded change contract.
 - `develop` to `main` promotion PRs are manual release gates and must never auto-merge.
 - Integration and backmerge PRs may auto-merge only after required checks pass, all review conversations are resolved, and there are no conflicts.
 - Releases and publishing happen only from trusted `main` workflows after validation.
