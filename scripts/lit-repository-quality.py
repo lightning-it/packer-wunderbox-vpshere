@@ -124,6 +124,17 @@ def check_generated_docs(meta: dict[str, str]) -> None:
         raise AssertionError("RELEASE.md does not include the repository type")
     if "Release Evidence" not in release:
         raise AssertionError("RELEASE.md does not describe release evidence")
+    if meta.get("repository_type", "") == "container_image":
+        for asset in [
+            "release-evidence.json",
+            "release-evidence.md",
+            "release-provenance.intoto.jsonl",
+            "sbom.cdx.json",
+            "SHA256SUMS",
+            "SHA256SUMS.sigstore.json",
+        ]:
+            if f"`{asset}`" not in release:
+                raise AssertionError(f"RELEASE.md does not list required release asset {asset}")
     if "Test Profiles" not in testing:
         raise AssertionError("TESTING.md does not describe test profiles")
     for term in ["OpenSSF Readiness", "Scorecard", "Best Practices Badge", "Security Policy"]:
@@ -177,13 +188,49 @@ def check_secret_safe_generated_docs() -> None:
 def check_terraform(repo_type: str) -> None:
     if repo_type not in {"terraform_module", "terraform_policy"}:
         return
-    tf_files = sorted(ROOT.glob("*.tf"))
+    tf_files = sorted(
+        path
+        for path in ROOT.glob("**/*.tf")
+        if ".terraform" not in path.relative_to(ROOT).parts
+    )
     if not tf_files:
-        raise AssertionError("Terraform repository has no root *.tf files")
+        raise AssertionError(
+            "Terraform repository has no *.tf files outside .terraform directories"
+        )
+    if repo_type == "terraform_module" and not any(path.parent == ROOT for path in tf_files):
+        raise AssertionError("Terraform module repository has no root *.tf files")
     if shutil_which("terraform"):
         run(["terraform", "fmt", "-check", "-recursive"])
-        run(["terraform", "init", "-backend=false", "-input=false"])
-        run(["terraform", "validate", "-no-color"])
+        if repo_type == "terraform_module":
+            validation_roots = [ROOT]
+        else:
+            validation_roots = sorted(
+                {
+                    path.parent
+                    for path in tf_files
+                    if (path.parent / ".terraform.lock.hcl").is_file()
+                    or (path.parent / "versions.tf").is_file()
+                    or (path.parent / "backend.tf").is_file()
+                }
+            )
+            if not validation_roots:
+                raise AssertionError(
+                    "Terraform policy repository has no explicit validation root; "
+                    "add .terraform.lock.hcl, versions.tf, or backend.tf"
+                )
+        for validation_root in validation_roots:
+            relative_root = validation_root.relative_to(ROOT)
+            chdir = "." if relative_root == Path(".") else relative_root.as_posix()
+            run(
+                [
+                    "terraform",
+                    f"-chdir={chdir}",
+                    "init",
+                    "-backend=false",
+                    "-input=false",
+                ]
+            )
+            run(["terraform", f"-chdir={chdir}", "validate", "-no-color"])
     else:
         print("Terraform CLI not installed; checked Terraform file presence only")
 
@@ -224,6 +271,50 @@ def check_markdown() -> None:
             raise AssertionError(f"{path.name} contains tab characters")
         if not text.endswith("\n"):
             raise AssertionError(f"{path.name} must end with a newline")
+
+
+def check_embedded_code() -> None:
+    result = subprocess.run(
+        ["git", "-c", f"safe.directory={ROOT}", "ls-files", "-z"],
+        cwd=ROOT,
+        text=True,
+        encoding="utf-8",
+        errors="surrogateescape",
+        capture_output=True,
+        check=False,
+    )
+    if result.returncode:
+        details = result.stderr.strip()
+        raise AssertionError(
+            "cannot enumerate tracked Markdown files with git ls-files"
+            + (f": {details}" if details else "")
+        )
+    markdown_paths = sorted(
+        path
+        for path in result.stdout.split("\0")
+        if path and Path(path).suffix.lower() == ".md"
+    )
+    if markdown_paths:
+        validator = ROOT / "scripts" / "validate-embedded-code.py"
+        shared_validator = ROOT / "default" / "scripts" / "validate-embedded-code.py"
+        if not validator.is_file() and shared_validator.is_file():
+            validator = shared_validator
+        command_prefix = [
+            sys.executable,
+            validator.relative_to(ROOT).as_posix(),
+        ]
+        batch: list[str] = []
+        batch_bytes = 0
+        for path in markdown_paths:
+            path_bytes = len(os.fsencode(path)) + 1
+            if batch and (len(batch) >= 100 or batch_bytes + path_bytes > 60_000):
+                run([*command_prefix, *batch])
+                batch = []
+                batch_bytes = 0
+            batch.append(path)
+            batch_bytes += path_bytes
+        if batch:
+            run([*command_prefix, *batch])
 
 
 def check_managed_assets() -> None:
@@ -341,6 +432,7 @@ def main() -> int:
         check_generated_docs(meta)
         check_secret_safe_generated_docs()
         check_markdown()
+        check_embedded_code()
         check_managed_assets()
         repo_type = meta.get("repository_type", "")
         check_terraform(repo_type)

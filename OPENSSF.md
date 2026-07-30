@@ -39,7 +39,7 @@ The Scorecard badge is included in `README.md` only for public repositories wher
 
 ## Best Practices Badge
 
-Required but not enrolled. Enroll manually at OpenSSF Best Practices, complete the questionnaire until the project reaches the configured target level, then record the numeric project ID as `openssf_best_practices.project_id` in the central `release-model/repositories.yml` inventory in `lightning-it/shared-assets-lit`.
+Enrolled in OpenSSF Best Practices. The badge is emitted from the central release-model inventory using project `13890` with target level `passing`.
 
 Do not add a passing OpenSSF Best Practices badge until the repository is actually enrolled and passing. Badges must be generated from the central `release-model/repositories.yml` inventory in `lightning-it/shared-assets-lit`; hand-written badges are rejected by the release-model audit.
 
@@ -51,10 +51,10 @@ Do not add a passing OpenSSF Best Practices badge until the repository is actual
 
 - `main` is the protected release branch.
 - `develop` is the integration branch for normal work, Renovate, and shared-assets-lit PRs.
-- Every non-trusted-automation pull request must have a completed GitHub Copilot
-  review for its current head revision. Trusted automation classes are exempt
-  only when their dedicated gate verifies the exact actor, branch, title,
-  current head revision, and class-specific bounded change contract.
+- Every non-trusted-automation pull request must have a completed GitHub Copilot review
+  for its current head revision. Trusted automation classes are exempt only when
+  their dedicated gate verifies the exact actor, branch, title, current head
+  revision, and class-specific bounded change contract.
 - `develop` to `main` promotion PRs are manual release gates and must never auto-merge.
 - Integration and backmerge PRs may auto-merge only after required checks pass, all review conversations are resolved, and there are no conflicts.
 - Releases and publishing happen only from trusted `main` workflows after validation.
