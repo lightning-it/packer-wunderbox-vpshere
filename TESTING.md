@@ -33,6 +33,7 @@ Run the managed repository-policy checks:
 python3 -m venv .venv
 .venv/bin/python -m pip install PyYAML==6.0.3
 .venv/bin/python scripts/lit-repository-quality.py
+.venv/bin/python scripts/lit-push-ready.py push-ready
 ```
 
 Run the repository-specific commands declared in
@@ -46,15 +47,3 @@ Heavy Incus execution is not required for this repository. Do not report an Incu
 The GitHub Actions matrix is the primary dashboard. Job names should expose the repository class, OS/runtime where applicable, and profile, for example `repository / quality`.
 
 Release evidence is generated during trusted release workflows and attached to or linked from GitHub Releases where the repository publishes release artifacts.
-
-## OpenSSF Enrollment Promotion Evidence
-
-The protected ancestry backmerge joins:
-
-- reviewed `develop` source `4e57d8841bbf16e19415662ef85ba82a7177cff7`, which records OpenSSF Best Practices project `13890`;
-- protected `main` source `d2beddb7f6f16095e2b176deae7ca617cb144985`.
-
-The resulting two-parent commit preserves the `develop` tree while making the
-current protected `main` history an ancestor. This evidence does not claim that
-the repository already contains executable Packer templates or that the OpenSSF
-questionnaire has reached the passing level.
