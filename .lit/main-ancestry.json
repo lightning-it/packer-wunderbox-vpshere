@@ -1,0 +1,7 @@
+{
+  "develop_parent_sha": "f9a0eff50fa426bc49b3d1a6294211100e9346e1",
+  "main_sha": "d00767fcbed1d05e9c6c82d4305eba341bafae85",
+  "purpose": "Bind the reviewed main ancestry backmerge.",
+  "repository": "lightning-it/packer-wunderbox-vpshere",
+  "schema_version": 1
+}
